@@ -29,4 +29,4 @@ jobs:
           pytest --version  # This checks if pytest is installed and available
 
       - name: Run Pytest
-        run: pytest -v tests
+        run: pytest -v ml_project/tests
