@@ -63,7 +63,7 @@ jobs:
           use-mamba: true
 
       - name: Install Package
-        run: pip install dist/*.whl
+        run: pip install *.whl
 
       - name: Run Data Ingestion Script
         run: python scripts/ingest_data.py --output-path data/processed_data.csv
