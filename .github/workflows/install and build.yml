@@ -1,4 +1,4 @@
-name: Install and Run Scripts
+name: Build and Install Package
 
 on:
   push:
@@ -7,16 +7,45 @@ on:
     branches: [main]
 
 jobs:
-  install:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4.1.7
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env.yml
+          activate-environment: ml_project_env
+
+      - name: Display Directory Tree Before Build
+        run: tree .
+
+      - name: Build the Package
+        run: python setup.py sdist bdist_wheel
+
+      - name: Display Directory Tree After Build
+        run: tree .
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
+          path: dist/
+
+  install:
+    runs-on: ubuntu-latest
+    needs: build  # Ensures 'build' job runs first
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist  # Explicitly specify path to store artifacts
 
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v2
