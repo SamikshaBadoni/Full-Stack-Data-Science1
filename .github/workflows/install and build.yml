@@ -18,6 +18,7 @@ jobs:
         with:
           environment-file: env.yml
           activate-environment: ml_project_env
+          use-mamba: true  # Faster and more stable
 
       - name: Display Directory Tree Before Build
         run: tree .
@@ -32,7 +33,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: dist/
+          path: |
+            dist/
+            env.yml  # Ensures env.yml is available in the next job
 
   install:
     runs-on: ubuntu-latest
@@ -45,13 +48,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: dist  # Explicitly specify path to store artifacts
+          path: dist/  # Explicitly set the path
+
+      - name: Verify Downloaded Artifacts
+        run: |
+          ls -R dist/
+          cat dist/env.yml  # Ensure env.yml is present
 
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v2
         with:
-          environment-file: env.yml
+          environment-file: dist/env.yml
           activate-environment: ml_project_env
+          use-mamba: true
 
       - name: Install Package
         run: pip install dist/*.whl
