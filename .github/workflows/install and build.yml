@@ -52,13 +52,13 @@ jobs:
 
       - name: Verify Downloaded Artifacts
         run: |
-          ls -R dist/
-          cat dist/env.yml  # Ensure env.yml is present
+          ls -R 
+          if [ ! -f env.yml ]; then echo "❌ env.yml is missing!" && exit 1; fi
 
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda@v2
         with:
-          environment-file: dist/env.yml
+          environment-file: env.yml
           activate-environment: ml_project_env
           use-mamba: true
 
