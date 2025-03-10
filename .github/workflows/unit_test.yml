@@ -17,7 +17,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: env.yml
-          activate-environment: ml_env
+          activate-environment: ml_project_env
 
       - name: Install Package in Dev Mode
         run: pip install -e .
