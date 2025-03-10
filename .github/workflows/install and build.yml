@@ -62,10 +62,10 @@ jobs:
         run: pip install build-artifacts/*.whl  # Corrected path
 
       - name: Run Data Ingestion Script
-        run: python scripts/ingest_data.py --output-path data/processed_data.csv
+        run: python ml_project/scripts/ingest_data.py --output-path data/processed_data.csv
 
       - name: Run Model Training Script
-        run: python scripts/train.py --input-path data/processed_data.csv --output-path model_registry/trained_model.pkl --log-level DEBUG --log-path logs/train.log --no-console-log
+        run: python ml_project/scripts/train.py --input-path data/processed_data.csv --output-path model_registry/trained_model.pkl --log-level DEBUG --log-path logs/train.log --no-console-log
 
       - name: Run Scoring Script
-        run: python scripts/score.py --model-path model_registry/trained_model.pkl --data-path data/processed_data.csv
+        run: python ml_project/scripts/score.py --model-path model_registry/trained_model.pkl --data-path data/processed_data.csv
