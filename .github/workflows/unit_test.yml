@@ -17,10 +17,17 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: env.yml
+          auto-activate-base: false
           activate-environment: ml_project_env
+          python-version: "3.9"
 
       - name: Install Package in Dev Mode
         run: pip install -e .
+
+      - name: Activate Conda environment
+        run: |
+          eval "$(conda shell.bash hook)"
+          conda activate ml_project_env
 
       - name: Run Pytest
         run: pytest -v tests
