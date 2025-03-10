@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -17,17 +18,15 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           environment-file: env.yml
-          auto-activate-base: false
           activate-environment: ml_project_env
-          python-version: "3.9"
 
       - name: Install Package in Dev Mode
         run: pip install -e .
 
-      - name: Activate Conda environment
+      - name: Verify Conda environment is active and check `pytest` installation
         run: |
-          eval "$(conda shell.bash hook)"
-          conda activate ml_project_env
+          conda list  # This will list all packages in the environment
+          pytest --version  # This checks if pytest is installed and available
 
       - name: Run Pytest
         run: pytest -v tests
