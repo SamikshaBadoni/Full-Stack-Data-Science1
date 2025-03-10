@@ -1,0 +1,37 @@
+name: Install and Run Scripts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env.yml
+          activate-environment: ml_env
+
+      - name: Install Package
+        run: pip install dist/*.whl
+
+      - name: Run Data Ingestion Script
+        run: python scripts/ingest_data.py --output-path data/processed_data.csv
+
+      - name: Run Model Training Script
+        run: python scripts/train.py --input-path data/processed_data.csv --output-path model_registry/trained_model.pkl --log-level DEBUG --log-path logs/train.log --no-console-log
+
+      - name: Run Scoring Script
+        run: python scripts/score.py --model-path model_registry/trained_model.pkl --data-path data/processed_data.csv

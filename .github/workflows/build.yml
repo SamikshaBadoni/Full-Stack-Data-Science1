@@ -1,0 +1,35 @@
+name: Build Package
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env.yml
+          activate-environment: ml_env
+
+      - name: Display Directory Tree Before Build
+        run: tree .
+
+      - name: Build the Package
+        run: python setup.py sdist bdist_wheel
+
+      - name: Display Directory Tree After Build
+        run: tree .
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/

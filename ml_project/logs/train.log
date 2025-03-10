@@ -1,0 +1,2 @@
+2025-03-10 16:40:32,526 - root - INFO - Starting model training with input: data/processed_data.csv and output: model_registry/trained_model.pkl
+2025-03-10 16:40:32,616 - root - INFO - Model training completed.
