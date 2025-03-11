@@ -1,0 +1,32 @@
+name: Unit and Functional Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env.yml
+          activate-environment: ml_project_env
+
+      - name: Install Package in Dev Mode
+        run: pip install -e .
+
+      - name: Verify Conda environment is active and check `pytest` installation
+        run: |
+          conda list  # This will list all packages in the environment
+          pytest --version  # This checks if pytest is installed and available
+
+      - name: Run Pytest
+        run: pytest -v ml_project/tests
