@@ -1,0 +1,71 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Ensure this matches your project's requirements
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build Package
+        run: python -m build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/*.whl
+
+  install:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: build-artifacts  # Ensure artifacts are placed in this directory
+
+      - name: Verify Downloaded Artifacts
+        run: |
+          ls -R
+          if [ ! -d build-artifacts ]; then echo "❌ build-artifacts directory is missing!" && exit 1; fi
+          if [ -z "$(ls -A build-artifacts/*.whl 2>/dev/null)" ]; then echo "❌ No .whl file found!" && exit 1; fi
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: env.yml
+          activate-environment: ml_project_env
+          use-mamba: true
+
+      - name: Install Package
+        run: pip install build-artifacts/*.whl  # Corrected path
+
+      - name: Run Data Ingestion Script
+        run: python ml_project/scripts/ingest_data.py --output-path ml_project/data/processed_data.csv
+
+      - name: Run Model Training Script
+        run: python ml_project/scripts/train.py --input-path ml_project/data/processed_data.csv --output-path ml_project/model_registry/trained_model.pkl --log-level DEBUG --log-path ml_project/logs/train.log --no-console-log
+
+      - name: Run Scoring Script
+        run: python ml_project/scripts/score.py --model-path ml_project/model_registry/trained_model.pkl --data-path ml_project/data/processed_data.csv

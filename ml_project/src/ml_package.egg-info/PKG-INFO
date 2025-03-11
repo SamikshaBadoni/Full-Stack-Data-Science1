@@ -1,0 +1,9 @@
+Metadata-Version: 2.2
+Name: ml_package
+Version: 0.1.0
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: scikit-learn
+Requires-Dist: argparse
+Requires-Dist: pytest
+Dynamic: requires-dist

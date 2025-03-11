@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.py
+ml_project/src/ml_package/__init__.py
+ml_project/src/ml_package/data_ingestion.py
+ml_project/src/ml_package/logger.py
+ml_project/src/ml_package/model_scoring.py
+ml_project/src/ml_package/model_training.py
+ml_project/src/ml_package.egg-info/PKG-INFO
+ml_project/src/ml_package.egg-info/SOURCES.txt
+ml_project/src/ml_package.egg-info/dependency_links.txt
+ml_project/src/ml_package.egg-info/requires.txt
+ml_project/src/ml_package.egg-info/top_level.txt
